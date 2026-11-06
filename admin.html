@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Админка — Тест на су-шефа</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #131313; --surface-2: #1b1b1b;
+  --border: #262626; --border-strong: #3a3a3a;
+  --text: #ececec; --text-dim: #7a7a7a;
+  --gold: #c9a227; --gold-bright: #e0b830; --gold-tint: rgba(201,162,39,0.10);
+  --success: #4caf50; --danger: #e74c3c;
+  --font-head: 'Oswald', 'Arial Narrow', sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+body {
+  background: var(--bg); color: var(--text); font-family: var(--font-body);
+  min-height: 100vh; padding: 24px 16px;
+  background-image: radial-gradient(ellipse 800px 400px at 50% 0%, rgba(201,162,39,0.06), transparent 70%);
+}
+.container { max-width: 960px; margin: 0 auto; }
+.hidden { display: none !important; }
+.badge {
+  display: inline-block; font-family: var(--font-head); font-size: 11px;
+  letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold);
+  border: 1px solid var(--gold); padding: 4px 10px; border-radius: 2px; margin-bottom: 20px;
+}
+h1 {
+  font-family: var(--font-head); font-size: 30px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 24px;
+}
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+  padding: 24px; margin-bottom: 16px;
+}
+.panel { max-width: 420px; margin: 80px auto; }
+.input {
+  width: 100%; background: var(--surface-2); border: 1px solid var(--border-strong);
+  color: var(--text); font-size: 16px; padding: 14px 16px; border-radius: 3px; outline: none;
+}
+.input:focus { border-color: var(--gold); }
+.btn {
+  font-family: var(--font-head); font-size: 14px; letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 14px 24px; border-radius: 3px; cursor: pointer; border: 1px solid var(--gold);
+  background: var(--gold); color: #0a0a0a; font-weight: 600;
+}
+.btn:hover { background: var(--gold-bright); border-color: var(--gold-bright); }
+.btn-ghost { background: transparent; color: var(--text-dim); border-color: var(--border-strong); }
+.btn-ghost:hover { color: var(--text); border-color: var(--text-dim); }
+.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+.topbar h1 { margin: 0; }
+.result-row {
+  display: grid; grid-template-columns: 1fr auto auto; gap: 16px; align-items: center;
+  padding: 14px 18px; background: var(--surface-2); border: 1px solid var(--border-strong);
+  border-radius: 3px; margin-bottom: 8px; cursor: pointer; transition: all 0.12s;
+}
+.result-row:hover { border-color: var(--gold); background: var(--gold-tint); }
+.result-name { font-weight: 600; font-size: 15px; }
+.result-meta { font-size: 12px; color: var(--text-dim); margin-top: 2px; letter-spacing: 0.05em; }
+.result-score { font-family: var(--font-head); font-size: 22px; color: var(--gold); }
+.result-score small { color: var(--text-dim); font-size: 12px; }
+.detail-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.detail-meta { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+.qa { padding: 16px 0; border-bottom: 1px solid var(--border); }
+.qa:last-child { border-bottom: none; }
+.qa-q { font-weight: 500; margin-bottom: 10px; line-height: 1.4; }
+.qa-score { font-family: var(--font-head); color: var(--gold); font-size: 13px; letter-spacing: 0.1em; float: right; }
+.qa-label { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); margin: 8px 0 4px; }
+.qa-item { font-size: 14px; padding: 4px 0; }
+.qa-item.ok { color: var(--success); }
+.qa-item.miss { color: var(--danger); }
+.qa-item.neutral { color: var(--text-dim); }
+.empty { text-align: center; color: var(--text-dim); padding: 40px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ===== LOGIN ===== -->
+  <div id="screen-login" class="card panel">
+    <div class="badge">Админка</div>
+    <h1>Вход</h1>
+    <label style="display:block;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;">Пароль</label>
+    <input type="password" id="pwd" class="input" placeholder="Пароль" autocomplete="off">
+    <button id="btn-login" class="btn" style="width:100%;margin-top:16px;">Войти</button>
+    <p id="login-error" class="hidden" style="color:var(--danger);font-size:13px;margin-top:12px;text-align:center;">Неверный пароль</p>
+  </div>
+
+  <!-- ===== LIST ===== -->
+  <div id="screen-list" class="hidden">
+    <div class="topbar">
+      <h1>Результаты</h1>
+      <div>
+        <button id="btn-refresh" class="btn btn-ghost" style="padding:10px 16px;font-size:12px;">Обновить</button>
+        <button id="btn-logout" class="btn btn-ghost" style="padding:10px 16px;font-size:12px;">Выйти</button>
+      </div>
+    </div>
+    <div id="results-container"><div class="empty">Загрузка…</div></div>
+  </div>
+
+  <!-- ===== DETAIL ===== -->
+  <div id="screen-detail" class="hidden">
+    <div class="topbar">
+      <button id="btn-back" class="btn btn-ghost" style="padding:10px 16px;font-size:12px;">← Назад</button>
+    </div>
+    <div class="card" id="detail-card"></div>
+  </div>
+
+</div>
+
+<script src="config.js"></script>
+<script>
+(function() {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const LS_AUTH = 'souschef_admin_auth';
+
+  if (sessionStorage.getItem(LS_AUTH) === '1') {
+    $('screen-login').classList.add('hidden');
+    $('screen-list').classList.remove('hidden');
+    loadResults();
+  }
+
+  $('btn-login').onclick = () => {
+    const v = $('pwd').value;
+    if (v === ADMIN_PASSWORD) {
+      sessionStorage.setItem(LS_AUTH, '1');
+      $('screen-login').classList.add('hidden');
+      $('screen-list').classList.remove('hidden');
+      loadResults();
+    } else {
+      $('login-error').classList.remove('hidden');
+    }
+  };
+  $('pwd').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-login').click(); });
+
+  $('btn-logout').onclick = () => {
+    sessionStorage.removeItem(LS_AUTH);
+    location.reload();
+  };
+  $('btn-refresh').onclick = () => loadResults();
+  $('btn-back').onclick = () => {
+    $('screen-detail').classList.add('hidden');
+    $('screen-list').classList.remove('hidden');
+  };
+
+  let allResults = [];
+
+  async function loadResults() {
+    const c = $('results-container');
+    c.innerHTML = '<div class="empty">Загрузка…</div>';
+    if (!DB_URL || DB_URL.indexOf('ТВОЙ-ПРОЕКТ') !== -1) {
+      c.innerHTML = '<div class="empty">Firebase не настроен. Заполни DB_URL в config.js</div>';
+      return;
+    }
+    try {
+      const res = await fetch(DB_URL + '/results.json');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      allResults = data ? Object.entries(data).map(([id, r]) => ({ id, ...r })) : [];
+      allResults.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      renderList();
+    } catch (e) {
+      c.innerHTML = '<div class="empty">Ошибка загрузки: ' + e.message + '</div>';
+    }
+  }
+
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    try {
+      const d = new Date(iso);
+      const pad = n => (n < 10 ? '0' : '') + n;
+      return pad(d.getDate()) + '.' + pad(d.getMonth()+1) + '.' + d.getFullYear() +
+        ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    } catch (e) { return iso; }
+  }
+
+  function renderList() {
+    const c = $('results-container');
+    if (!allResults.length) { c.innerHTML = '<div class="empty">Пока нет результатов</div>'; return; }
+    c.innerHTML = '';
+    allResults.forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'result-row';
+      row.innerHTML =
+        '<div><div class="result-name"></div><div class="result-meta"></div></div>' +
+        '<div class="result-score"></div>' +
+        '<div style="color:var(--text-dim);font-size:20px;">›</div>';
+      row.querySelector('.result-name').textContent = r.name || '—';
+      row.querySelector('.result-meta').textContent = (r.modeLabel || r.mode) + ' · ' + fmtDate(r.date);
+      row.querySelector('.result-score').innerHTML = (r.score || 0) + ' <small>/ ' + (r.max || 0) + '</small>';
+      row.onclick = () => showDetail(r);
+      c.appendChild(row);
+    });
+  }
+
+  function showDetail(r) {
+    $('screen-list').classList.add('hidden');
+    $('screen-detail').classList.remove('hidden');
+    const card = $('detail-card');
+    card.innerHTML = '';
+
+    const head = document.createElement('div');
+    head.className = 'detail-header';
+    head.innerHTML =
+      '<div><h1 style="margin-bottom:6px;"></h1><div class="detail-meta"></div></div>' +
+      '<div style="text-align:right;"><div style="font-family:var(--font-head);font-size:36px;color:var(--gold);"></div><div style="font-size:12px;color:var(--text-dim);"></div></div>';
+    head.querySelector('h1').textContent = r.name || '—';
+    head.querySelector('.detail-meta').textContent = (r.modeLabel || r.mode) + ' · ' + fmtDate(r.date);
+    head.querySelector('div[style*="text-align:right"] > div:first-child').textContent = (r.score || 0) + ' / ' + (r.max || 0);
+    head.querySelector('div[style*="text-align:right"] > div:last-child').textContent = (r.percent || 0) + '%';
+    card.appendChild(head);
+
+    const div = document.createElement('div');
+    div.style.cssText = 'height:1px;background:linear-gradient(90deg,transparent,var(--border-strong),transparent);margin:20px 0;';
+    card.appendChild(div);
+
+    (r.answers || []).forEach((a, i) => {
+      const qa = document.createElement('div');
+      qa.className = 'qa';
+      const q = document.createElement('div');
+      q.className = 'qa-q';
+      q.innerHTML = '<span class="qa-score"></span>';
+      q.appendChild(document.createTextNode((i+1) + '. ' + (a.question || '')));
+      q.querySelector('.qa-score').textContent = (a.score || 0) + ' / ' + (a.maxScore || 0);
+      qa.appendChild(q);
+
+      // выбранные
+      const selLabel = document.createElement('div');
+      selLabel.className = 'qa-label'; selLabel.textContent = 'Выбрал:';
+      qa.appendChild(selLabel);
+      (a.selected || []).forEach(t => {
+        const el = document.createElement('div');
+        el.className = 'qa-item ' + ((a.correct || []).indexOf(t) !== -1 ? 'ok' : 'miss');
+        el.textContent = (a.correct || []).indexOf(t) !== -1 ? '✓ ' + t : '✗ ' + t;
+        qa.appendChild(el);
+      });
+      if (!a.selected || !a.selected.length) {
+        const el = document.createElement('div');
+        el.className = 'qa-item neutral'; el.textContent = '— ничего не выбрал';
+        qa.appendChild(el);
+      }
+
+      // пропущенные правильные
+      const missed = (a.correct || []).filter(t => (a.selected || []).indexOf(t) === -1);
+      if (missed.length) {
+        const ml = document.createElement('div');
+        ml.className = 'qa-label'; ml.textContent = 'Не выбрал правильные:';
+        qa.appendChild(ml);
+        missed.forEach(t => {
+          const el = document.createElement('div');
+          el.className = 'qa-item neutral'; el.textContent = '○ ' + t;
+          qa.appendChild(el);
+        });
+      }
+      card.appendChild(qa);
+    });
+  }
+})();
+</script>
+</body>
+</html>

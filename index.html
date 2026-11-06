@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест на су-шефа — Гриль-парк «Дача»</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a;
+  --surface: #131313;
+  --surface-2: #1b1b1b;
+  --border: #262626;
+  --border-strong: #3a3a3a;
+  --text: #ececec;
+  --text-dim: #7a7a7a;
+  --gold: #c9a227;
+  --gold-bright: #e0b830;
+  --gold-tint: rgba(201,162,39,0.10);
+  --success: #4caf50;
+  --danger: #e74c3c;
+  --font-head: 'Oswald', 'Arial Narrow', sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 16px;
+  background-image: radial-gradient(ellipse 800px 400px at 50% 0%, rgba(201,162,39,0.06), transparent 70%);
+  -webkit-font-smoothing: antialiased;
+}
+.container {
+  width: 100%;
+  max-width: 720px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 36px 28px 28px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+  position: relative;
+}
+.container::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.hidden { display: none !important; }
+.badge {
+  display: inline-block;
+  font-family: var(--font-head);
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  padding: 4px 10px;
+  border-radius: 2px;
+  margin-bottom: 20px;
+}
+.title {
+  font-family: var(--font-head);
+  font-size: 32px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+}
+.subtitle {
+  color: var(--text-dim);
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 6px;
+  margin-bottom: 28px;
+}
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+  margin: 24px 0;
+}
+.label {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.input {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  padding: 14px 16px;
+  border-radius: 3px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input:focus { border-color: var(--gold); }
+.banner {
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: var(--gold-tint);
+  border: 1px solid var(--gold);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+.banner span { flex: 1; min-width: 200px; }
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 24px;
+}
+.mode-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  padding: 18px 20px;
+  border-radius: 3px;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.15s;
+  position: relative;
+}
+.mode-card:hover {
+  border-color: var(--gold);
+  background: var(--gold-tint);
+}
+.mode-name {
+  font-family: var(--font-head);
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.mode-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+.test-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.progress {
+  font-family: var(--font-head);
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.timer {
+  font-family: var(--font-head);
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  padding: 4px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  min-width: 70px;
+  text-align: center;
+}
+.timer.danger { color: var(--danger); border-color: var(--danger); }
+.progress-bar {
+  height: 3px;
+  background: var(--surface-2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--gold);
+  width: 0%;
+  transition: width 0.3s;
+}
+.question-text {
+  font-family: var(--font-body);
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+.hint {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.12s;
+  user-select: none;
+}
+.option:hover { border-color: var(--gold); }
+.option.selected {
+  border-color: var(--gold);
+  background: var(--gold-tint);
+}
+.option input { display: none; }
+.option-mark {
+  flex-shrink: 0;
+  width: 20px; height: 20px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  position: relative;
+  margin-top: 1px;
+  transition: all 0.12s;
+}
+.option.selected .option-mark {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+.option.selected .option-mark::after {
+  content: '';
+  position: absolute;
+  left: 6px; top: 2px;
+  width: 5px; height: 10px;
+  border: solid #0a0a0a;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.option-text {
+  font-size: 15px;
+  line-height: 1.4;
+}
+.test-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.btn {
+  font-family: var(--font-head);
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 14px 24px;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+.btn-primary {
+  background: var(--gold);
+  color: #0a0a0a;
+  border-color: var(--gold);
+  font-weight: 600;
+}
+.btn-primary:hover { background: var(--gold-bright); border-color: var(--gold-bright); }
+.btn-ghost {
+  background: transparent;
+  color: var(--text-dim);
+  border-color: var(--border-strong);
+}
+.btn-ghost:hover { color: var(--text); border-color: var(--text-dim); }
+.btn-small {
+  font-family: var(--font-head);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border-radius: 2px;
+  cursor: pointer;
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: #0a0a0a;
+}
+.btn-small.btn-ghost { background: transparent; color: var(--text-dim); border-color: var(--border-strong); }
+.score-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  margin: 32px 0 8px;
+}
+.score-big {
+  font-family: var(--font-head);
+  font-size: 72px;
+  font-weight: 600;
+  color: var(--gold);
+  line-height: 1;
+}
+.score-max {
+  font-family: var(--font-head);
+  font-size: 24px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+}
+.score-percent {
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: 18px;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+}
+.result-detail {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.result-detail strong { color: var(--text); }
+.center { text-align: center; }
+@media (max-width: 520px) {
+  .container { padding: 28px 20px 20px; }
+  .title { font-size: 26px; }
+  .score-big { font-size: 56px; }
+  .test-actions { flex-direction: column-reverse; }
+  .btn { width: 100%; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ===== START ===== -->
+  <section id="screen-start" class="screen">
+    <div class="badge">Гриль-парк «Дача»</div>
+    <h1 class="title">Тест на су-шефа</h1>
+    <p class="subtitle">Проверка профессиональных качеств</p>
+    <div class="divider"></div>
+    <label class="label" for="name-input">Твоё имя</label>
+    <input type="text" id="name-input" class="input" placeholder="Введи имя" autocomplete="off">
+    <div id="resume-banner" class="banner hidden">
+      <span id="resume-text"></span>
+      <button id="btn-resume" class="btn-small">Продолжить</button>
+      <button id="btn-restart" class="btn-small btn-ghost">Заново</button>
+    </div>
+    <div class="divider"></div>
+    <p class="hint" style="margin-bottom:0;">Выбери режим</p>
+    <div class="mode-grid">
+      <button class="mode-card" data-mode="unlimited">
+        <div class="mode-name">Безлимит</div>
+        <div class="mode-desc">30 вопросов · без таймера · можно прервать и продолжить позже</div>
+      </button>
+      <button class="mode-card" data-mode="30min">
+        <div class="mode-name">30 минут</div>
+        <div class="mode-desc">20 вопросов · 30 минут на весь тест · время вышло — тест завершён</div>
+      </button>
+      <button class="mode-card" data-mode="blitz">
+        <div class="mode-name">Блиц</div>
+        <div class="mode-desc">15 вопросов · по 20 секунд на каждый · не успел — балл не засчитан</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== TEST ===== -->
+  <section id="screen-test" class="screen hidden">
+    <div class="test-header">
+      <div class="progress" id="progress">Вопрос 1 из 30</div>
+      <div class="timer hidden" id="timer">30:00</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <h2 class="question-text" id="question-text"></h2>
+    <p class="hint">Выбери все правильные варианты</p>
+    <div class="options-list" id="options-list"></div>
+    <div class="test-actions">
+      <button id="btn-save-exit" class="btn btn-ghost">Сохранить и выйти</button>
+      <button id="btn-next" class="btn btn-primary">Далее</button>
+    </div>
+  </section>
+
+  <!-- ===== RESULT ===== -->
+  <section id="screen-result" class="screen hidden">
+    <div class="badge">Результат</div>
+    <h1 class="title">Тест завершён</h1>
+    <div class="score-display">
+      <div class="score-big" id="score-big">0</div>
+      <div class="score-max" id="score-max">из 0</div>
+    </div>
+    <div class="score-percent" id="score-percent">0%</div>
+    <div class="divider"></div>
+    <div class="result-detail center" id="result-detail"></div>
+    <div class="divider"></div>
+    <button id="btn-again" class="btn btn-primary" style="width:100%;">Пройти ещё раз</button>
+  </section>
+
+</div>
+
+<script src="config.js"></script>
+<script src="questions.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  const MODES = {
+    unlimited: { label: 'Безлимит', count: 30 },
+    '30min':   { label: '30 минут', count: 20, totalSeconds: 30 * 60 },
+    blitz:     { label: 'Блиц',     count: 15, perQuestion: 20 }
+  };
+
+  const LS_KEY = 'souschef_session_v1';
+
+  const state = {
+    name: '', mode: '',
+    questions: [], answers: [],
+    current: 0,
+    totalRemaining: 0,
+    perQuestionRemaining: 0,
+    totalInterval: null,
+    perQuestionInterval: null,
+    active: false
+  };
+
+  // ---------- утилиты ----------
+  function $(id) { return document.getElementById(id); }
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  function fmtTime(sec) {
+    sec = Math.max(0, Math.floor(sec));
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+  function showScreen(name) {
+    ['start','test','result'].forEach(n => {
+      $('screen-' + n).classList.toggle('hidden', n !== name);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ---------- подготовка вопросов ----------
+  function prepareQuestion(q) {
+    const opts = q.options.map((o, i) => ({ text: o.text, correct: o.correct }));
+    const shuffled = shuffle(opts);
+    return {
+      id: q.id,
+      block: q.block,
+      text: q.text,
+      options: shuffled.map(o => o.text),
+      correct: shuffled.map((o, i) => o.correct ? i : -1).filter(i => i >= 0)
+    };
+  }
+
+  function scoreAnswer(q, selected) {
+    const correctSet = new Set(q.correct);
+    let s = 0;
+    for (const i of selected) {
+      if (correctSet.has(i)) s++;
+      else s--;
+    }
+    return Math.max(0, s);
+  }
+
+  // ---------- старт ----------
+  function checkSavedSession() {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return null;
+      const data = JSON.parse(raw);
+      if (!data || !data.questions || !data.questions.length) return null;
+      return data;
+    } catch (e) { return null; }
+  }
+
+  function renderResumeBanner() {
+    const saved = checkSavedSession();
+    const banner = $('resume-banner');
+    if (!saved) { banner.classList.add('hidden'); return; }
+    banner.classList.remove('hidden');
+    $('resume-text').textContent = 'Незаконченный тест: ' + saved.name + ' · ' +
+      (saved.current + 1) + ' из ' + saved.questions.length + ' вопросов';
+    $('btn-resume').onclick = () => resumeSession(saved);
+    $('btn-restart').onclick = () => {
+      localStorage.removeItem(LS_KEY);
+      banner.classList.add('hidden');
+    };
+  }
+
+  function saveSession() {
+    if (state.mode !== 'unlimited') return;
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify({
+        name: state.name,
+        mode: state.mode,
+        questions: state.questions,
+        answers: state.answers,
+        current: state.current
+      }));
+    } catch (e) {}
+  }
+
+  function resumeSession(saved) {
+    state.name = saved.name;
+    state.mode = 'unlimited';
+    state.questions = saved.questions;
+    state.answers = saved.answers;
+    state.current = saved.current;
+    state.active = true;
+    showScreen('test');
+    renderQuestion();
+  }
+
+  function startTest(mode) {
+    const name = $('name-input').value.trim();
+    if (!name) {
+      $('name-input').focus();
+      $('name-input').style.borderColor = 'var(--danger)';
+      setTimeout(() => { $('name-input').style.borderColor = ''; }, 1500);
+      return;
+    }
+    const cfg = MODES[mode];
+    if (!cfg) return;
+    const pool = shuffle(QUESTION_BANK);
+    if (pool.length < cfg.count) {
+      alert('В банке недостаточно вопросов. Нужно минимум ' + cfg.count);
+      return;
+    }
+    state.name = name;
+    state.mode = mode;
+    state.questions = pool.slice(0, cfg.count).map(prepareQuestion);
+    state.answers = state.questions.map(() => ({ selected: [], score: 0 }));
+    state.current = 0;
+    state.active = true;
+
+    if (mode === '30min') {
+      state.totalRemaining = cfg.totalSeconds;
+      startTotalTimer();
+    }
+    showScreen('test');
+    renderQuestion();
+    saveSession();
+  }
+
+  // ---------- таймеры ----------
+  function startTotalTimer() {
+    const timerEl = $('timer');
+    timerEl.classList.remove('hidden', 'danger');
+    updateTotalTimerDisplay();
+    state.totalInterval = setInterval(() => {
+      state.totalRemaining--;
+      updateTotalTimerDisplay();
+      if (state.totalRemaining <= 0) {
+        clearInterval(state.totalInterval);
+        state.totalInterval = null;
+        finalizeTest(true);
+      }
+    }, 1000);
+  }
+
+  function updateTotalTimerDisplay() {
+    const el = $('timer');
+    el.textContent = fmtTime(state.totalRemaining);
+    el.classList.toggle('danger', state.totalRemaining <= 60);
+  }
+
+  function startPerQuestionTimer() {
+    const timerEl = $('timer');
+    timerEl.classList.remove('hidden');
+    state.perQuestionRemaining = MODES.blitz.perQuestion;
+    updatePerQuestionDisplay();
+    state.perQuestionInterval = setInterval(() => {
+      state.perQuestionRemaining--;
+      updatePerQuestionDisplay();
+      if (state.perQuestionRemaining <= 0) {
+        clearInterval(state.perQuestionInterval);
+        state.perQuestionInterval = null;
+        // время вышло — балл не засчитан, идём дальше
+        state.answers[state.current].score = 0;
+        state.answers[state.current].selected = [];
+        advanceBlitz();
+      }
+    }, 1000);
+  }
+
+  function updatePerQuestionDisplay() {
+    const el = $('timer');
+    el.textContent = '0:' + (state.perQuestionRemaining < 10 ? '0' : '') + Math.max(0, state.perQuestionRemaining);
+    el.classList.toggle('danger', state.perQuestionRemaining <= 5);
+  }
+
+  function stopAllTimers() {
+    if (state.totalInterval) { clearInterval(state.totalInterval); state.totalInterval = null; }
+    if (state.perQuestionInterval) { clearInterval(state.perQuestionInterval); state.perQuestionInterval = null; }
+  }
+
+  // ---------- рендер вопроса ----------
+  function renderQuestion() {
+    const q = state.questions[state.current];
+    const a = state.answers[state.current];
+    $('progress').textContent = 'Вопрос ' + (state.current + 1) + ' из ' + state.questions.length;
+    $('progress-fill').style.width = ((state.current / state.questions.length) * 100) + '%';
+    $('question-text').textContent = q.text;
+
+    const list = $('options-list');
+    list.innerHTML = '';
+    q.options.forEach((text, i) => {
+      const label = document.createElement('label');
+      label.className = 'option' + (a.selected.indexOf(i) !== -1 ? ' selected' : '');
+      label.innerHTML =
+        '<input type="checkbox" data-idx="' + i + '"' + (a.selected.indexOf(i) !== -1 ? ' checked' : '') + '>' +
+        '<span class="option-mark"></span>' +
+        '<span class="option-text"></span>';
+      label.querySelector('.option-text').textContent = text;
+      label.querySelector('input').addEventListener('change', function(e) {
+        const idx = parseInt(e.target.dataset.idx, 10);
+        if (e.target.checked) {
+          if (a.selected.indexOf(idx) === -1) a.selected.push(idx);
+        } else {
+          a.selected = a.selected.filter(x => x !== idx);
+        }
+        label.classList.toggle('selected', e.target.checked);
+      });
+      list.appendChild(label);
+    });
+
+    // кнопки
+    const isLast = state.current === state.questions.length - 1;
+    $('btn-next').textContent = isLast ? 'Завершить' : 'Далее';
+    $('btn-save-exit').style.display = state.mode === 'unlimited' ? '' : 'none';
+    $('btn-save-exit').onclick = () => { saveSession(); stopAllTimers(); state.active = false; showScreen('start'); renderResumeBanner(); };
+    $('btn-next').onclick = () => {
+      state.answers[state.current].score = scoreAnswer(q, a.selected);
+      if (isLast) { finalizeTest(false); }
+      else { advance(); }
+    };
+
+    // таймер блица
+    if (state.mode === 'blitz') {
+      if (state.perQuestionInterval) clearInterval(state.perQuestionInterval);
+      startPerQuestionTimer();
+    }
+  }
+
+  function advance() {
+    state.current++;
+    saveSession();
+    if (state.mode !== 'blitz') {
+      renderQuestion();
+    } else {
+      renderQuestion();
+    }
+  }
+
+  function advanceBlitz() {
+    state.answers[state.current].score = 0;
+    if (state.current === state.questions.length - 1) {
+      finalizeTest(false);
+    } else {
+      state.current++;
+      renderQuestion();
+    }
+  }
+
+  // ---------- финал ----------
+  function finalizeTest(autoFinished) {
+    stopAllTimers();
+    const total = state.answers.reduce((s, a) => s + (a.score || 0), 0);
+    const maxPerQuestion = 4;
+    const max = state.questions.length * maxPerQuestion;
+    const percent = max > 0 ? Math.round((total / max) * 100) : 0;
+
+    $('score-big').textContent = total;
+    $('score-max').textContent = 'из ' + max;
+    $('score-percent').textContent = percent + '%';
+    const correctTotal = state.answers.reduce((s, a) => s + (a.score || 0), 0);
+    $('result-detail').innerHTML = autoFinished
+      ? 'Время вышло. Ответы сохранены. Спасибо!'
+      : 'Спасибо за прохождение. Мы свяжемся с тобой.';
+
+    showScreen('result');
+    $('btn-again').onclick = () => {
+      localStorage.removeItem(LS_KEY);
+      $('name-input').value = '';
+      $('resume-banner').classList.add('hidden');
+      $('timer').classList.add('hidden');
+      showScreen('start');
+      renderResumeBanner();
+    };
+
+    // Сохраняем в Firebase
+    const payload = {
+      name: state.name,
+      mode: state.mode,
+      modeLabel: MODES[state.mode].label,
+      date: new Date().toISOString(),
+      score: total,
+      max: max,
+      percent: percent,
+      autoFinished: !!autoFinished,
+      answers: state.questions.map((q, i) => ({
+        question: q.text,
+        block: q.block,
+        selected: state.answers[i].selected.map(x => q.options[x]),
+        correct: q.correct.map(x => q.options[x]),
+        score: state.answers[i].score || 0,
+        maxScore: q.correct.length
+      }))
+    };
+    saveToFirebase(payload).catch(err => console.error('Firebase error:', err));
+
+    localStorage.removeItem(LS_KEY);
+    state.active = false;
+  }
+
+  async function saveToFirebase(payload) {
+    if (!DB_URL || DB_URL.indexOf('ТВОЙ-ПРОЕКТ') !== -1) {
+      console.warn('Firebase не настроен — результаты не сохраняются. Заполни config.js');
+      return;
+    }
+    const res = await fetch(DB_URL + '/results.json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Firebase ' + res.status);
+  }
+
+  // ---------- init ----------
+  document.querySelectorAll('.mode-card').forEach(card => {
+    card.addEventListener('click', () => startTest(card.dataset.mode));
+  });
+  renderResumeBanner();
+})();
+</script>
+</body>
+</html>
