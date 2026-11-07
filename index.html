@@ -433,7 +433,8 @@ body {
   function finalizeTest(autoFinished) {
     stopAllTimers();
     const total = state.answers.reduce((s, a) => s + (a.score || 0), 0);
-    const max = state.questions.length * 4;
+    // ИСПРАВЛЕНИЕ: Считаем максимум динамически (сумма всех правильных ответов)
+    const max = state.questions.reduce((sum, q) => sum + q.correct.length, 0);
     const percent = max > 0 ? Math.round((total / max) * 100) : 0;
 
     $('score-big').textContent = total;
@@ -454,12 +455,10 @@ body {
       $('review-container').classList.add('hidden'); showScreen('start'); renderResumeBanner();
     };
 
-    // Показываем разбор ошибок, если это сотрудник или тренировка
     if (state.role === 'employee' || state.mode === 'training') {
       renderReview();
     }
 
-    // Сохраняем, если это не тренировка
     if (state.mode !== 'training') {
       const payload = {
         name: state.name, position: state.position, role: state.role,
@@ -491,7 +490,8 @@ body {
       
       const qTitle = document.createElement('div');
       qTitle.className = 'review-q';
-      qTitle.innerHTML = '<span class="review-score">' + (a.score || 0) + ' / 4</span>' + (i+1) + '. ' + q.text;
+      // ИСПРАВЛЕНИЕ: Показываем реальный максимум (q.correct.length) вместо жесткой 4
+      qTitle.innerHTML = '<span class="review-score">' + (a.score || 0) + ' / ' + q.correct.length + '</span>' + (i+1) + '. ' + q.text;
       item.appendChild(qTitle);
 
       const selLabel = document.createElement('div'); selLabel.className = 'review-label'; selLabel.textContent = 'Выбрал:';
