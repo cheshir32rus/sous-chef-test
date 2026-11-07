@@ -39,6 +39,8 @@ h1 { font-family: var(--font-head); font-size: 30px; font-weight: 500; text-tran
 .btn:hover { background: var(--gold-bright); border-color: var(--gold-bright); }
 .btn-ghost { background: transparent; color: var(--text-dim); border-color: var(--border-strong); }
 .btn-ghost:hover { color: var(--text); border-color: var(--text-dim); }
+.btn-danger { background: transparent; color: var(--danger); border-color: var(--danger); }
+.btn-danger:hover { background: var(--danger); color: #fff; }
 .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
 .topbar h1 { margin: 0; }
 .result-row {
@@ -113,7 +115,10 @@ h1 { font-family: var(--font-head); font-size: 30px; font-weight: 500; text-tran
   <div id="screen-detail" class="hidden">
     <div class="topbar">
       <button id="btn-back" class="btn btn-ghost" style="padding:10px 16px;font-size:12px;">← Назад</button>
-      <button id="btn-print" class="btn" style="padding:10px 16px;font-size:12px;">Распечатать / PDF</button>
+      <div style="display:flex; gap:12px;">
+        <button id="btn-delete" class="btn btn-danger" style="padding:10px 16px;font-size:12px;">Удалить</button>
+        <button id="btn-print" class="btn" style="padding:10px 16px;font-size:12px;">Распечатать / PDF</button>
+      </div>
     </div>
     <div class="card" id="detail-card"></div>
   </div>
@@ -126,6 +131,7 @@ h1 { font-family: var(--font-head); font-size: 30px; font-weight: 500; text-tran
   'use strict';
   const $ = id => document.getElementById(id);
   const LS_AUTH = 'souschef_admin_auth';
+  let currentResultId = null; // Храним ID текущей открытой записи
 
   if (sessionStorage.getItem(LS_AUTH) === '1') {
     $('screen-login').classList.add('hidden'); $('screen-list').classList.remove('hidden'); loadResults();
@@ -142,6 +148,23 @@ h1 { font-family: var(--font-head); font-size: 30px; font-weight: 500; text-tran
   $('btn-refresh').onclick = () => loadResults();
   $('btn-back').onclick = () => { $('screen-detail').classList.add('hidden'); $('screen-list').classList.remove('hidden'); };
   $('btn-print').onclick = () => window.print();
+
+  // Логика удаления
+  $('btn-delete').onclick = async () => {
+    if (!currentResultId) return;
+    if (confirm('Ты уверен, что хочешь удалить этот результат? Это действие нельзя отменить.')) {
+      try {
+        const res = await fetch(DB_URL + '/results/' + currentResultId + '.json', { method: 'DELETE' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        // Успешно удалено
+        $('screen-detail').classList.add('hidden');
+        $('screen-list').classList.remove('hidden');
+        loadResults(); // Обновляем список
+      } catch (e) {
+        alert('Ошибка при удалении: ' + e.message);
+      }
+    }
+  };
 
   let allResults = [];
 
@@ -180,7 +203,7 @@ h1 { font-family: var(--font-head); font-size: 30px; font-weight: 500; text-tran
       
       let nameStr = r.name || '—';
       if (r.position) nameStr += ' (' + r.position + ')';
-      if (r.role === 'employee') nameStr += ' 👤'; // Метка сотрудника
+      if (r.role === 'employee') nameStr += ' 👤';
       
       row.querySelector('.result-name').textContent = nameStr;
       row.querySelector('.result-meta').textContent = (r.modeLabel || r.mode) + ' · ' + fmtDate(r.date);
@@ -191,6 +214,7 @@ h1 { font-family: var(--font-head); font-size: 30px; font-weight: 500; text-tran
   }
 
   function showDetail(r) {
+    currentResultId = r.id; // Запоминаем ID для удаления
     $('screen-list').classList.add('hidden'); $('screen-detail').classList.remove('hidden');
     const card = $('detail-card'); card.innerHTML = '';
     const pct = r.percent || 0; const colorClass = getScoreColor(pct);
